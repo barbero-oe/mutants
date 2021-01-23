@@ -8,7 +8,7 @@ import (
 
 // atcg
 func TestHumanDna(t *testing.T) {
-	t.Run("human-1", isHuman([]string{"A", "T"}))
+	t.Run("human-1", isHuman([]string{"AA", "TT"}))
 	t.Run("human-2", isHuman([]string{
 		"ATCG",
 		"TAGC",
@@ -29,6 +29,11 @@ func TestMutantDna(t *testing.T) {
 		"TAGC",
 		"TTTT",
 		"ATCG"}))
+	t.Run("mutant-2", isMutant([]string{
+		"TAGC",
+		"TAGC",
+		"TTTT",
+		"TTCG"}))
 }
 
 func isHuman(dna []string) func(*testing.T) {
