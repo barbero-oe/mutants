@@ -69,7 +69,7 @@ HTTP POST con un Json el cual tenga el siguiente formato:
 ```json
 POST → /mutant/
 {
-    "dna": ["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"]
+    "dna": ["ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"]
 }
 ```
 
@@ -84,7 +84,11 @@ Solo 1 registro por ADN.
 
 Exponer un servicio extra “/stats” que devuelva un Json con las estadísticas de las verificaciones de ADN:
 ```json
-{“count_mutant_dna”:40, “count_human_dna”:100: “ratio”:0.4}
+{
+    "count_mutant_dna": 40,
+    "count_human_dna": 100,
+    "ratio":0.4
+}
 ```
 
 Tener en cuenta que la API puede recibir fluctuaciones agresivas de tráfico
