@@ -17,7 +17,8 @@ func IsMutant(dna []string) bool {
 	defer close(done)
 	horizontalSignals := findMutantSequences(done, &traversal.Horizontal{Items: runesDna})
 	verticalSignals := findMutantSequences(done, &traversal.Vertical{Items: runesDna})
-	return checkMutations(horizontalSignals, verticalSignals)
+	obliqueRight := findMutantSequences(done, &traversal.ObliqueRight{Items: runesDna})
+	return checkMutations(horizontalSignals, verticalSignals, obliqueRight)
 }
 
 func toRunes(dna []string) [][]rune {

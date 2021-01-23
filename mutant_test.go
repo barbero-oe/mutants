@@ -34,6 +34,15 @@ func TestMutantDna(t *testing.T) {
 		"TAGC",
 		"TTTT",
 		"TTCG"}))
+	t.Run("mutant-3", isMutant([]string{
+		"ATCGTTC",
+		"TACCGTT",
+		"TTATCGT",
+		"CTTACTG",
+		"TCTCTCT",
+		"TTTCTTT",
+		"TTTCTTT",
+	}))
 }
 
 func isHuman(dna []string) func(*testing.T) {
