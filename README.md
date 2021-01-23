@@ -49,8 +49,6 @@ String[] dna = {"ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"};
 ```
 
 En este caso el llamado a la función isMutant(dna) devuelve “true”.
-
-Desarrolla el algoritmo de la manera más eficiente posible.
                                                                                                                                                   
 # Desafíos:
 
