@@ -1,13 +1,10 @@
 package mutant
 
 import (
-	"sync"
-
+	"barbero.oe/mutants/concurrency"
 	"barbero.oe/mutants/dna"
 	"barbero.oe/mutants/traversal"
 )
-
-// atcg
 
 // IsMutant detects mutant dna if more than four equal consecutive letters are
 // found
@@ -15,11 +12,12 @@ func IsMutant(dna []string) bool {
 	runesDna := toRunes(dna)
 	done := make(chan struct{})
 	defer close(done)
-	horizontalSignals := findMutantSequences(done, &traversal.Horizontal{Items: runesDna})
-	verticalSignals := findMutantSequences(done, &traversal.Vertical{Items: runesDna})
-	obliqueRight := findMutantSequences(done, &traversal.ObliqueRight{Items: runesDna})
-	obliqueLeft := findMutantSequences(done, &traversal.ObliqueLeft{Items: runesDna})
-	return checkMutations(horizontalSignals, verticalSignals, obliqueRight, obliqueLeft)
+	signals := findOn(done,
+		&traversal.Horizontal{Items: runesDna},
+		&traversal.Vertical{Items: runesDna},
+		&traversal.ObliqueRight{Items: runesDna},
+		&traversal.ObliqueLeft{Items: runesDna})
+	return checkMutations(signals)
 }
 
 func toRunes(dna []string) [][]rune {
@@ -30,35 +28,24 @@ func toRunes(dna []string) [][]rune {
 	return runes
 }
 
-func checkMutations(channels ...<-chan struct{}) bool {
+func findOn(done <-chan struct{}, strategies ...dna.Iterator) <-chan struct{} {
+	outs := make([]<-chan struct{}, len(strategies))
+	for i, strategy := range strategies {
+		ch := findMutantSequences(done, strategy)
+		outs[i] = ch
+	}
+	return concurrency.Merge(outs)
+}
+
+func checkMutations(signal <-chan struct{}) bool {
 	count := 0
-	for range merge(channels...) {
+	for range signal {
 		count++
 		if count > 1 {
 			return true
 		}
 	}
 	return false
-}
-
-func merge(channels ...<-chan struct{}) <-chan struct{} {
-	var wg sync.WaitGroup
-	wg.Add(len(channels))
-	out := make(chan struct{})
-	consume := func(ch <-chan struct{}) {
-		defer wg.Done()
-		for range ch {
-			out <- struct{}{}
-		}
-	}
-	for _, ch := range channels {
-		go consume(ch)
-	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
-	return out
 }
 
 func findMutantSequences(done <-chan struct{}, dna dna.Iterator) <-chan struct{} {
